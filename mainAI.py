@@ -12,20 +12,21 @@ GAME_STATE = sys.argv[1]
 
 #Now we need to split the GAME_STATE by '/' to get all the information
 parts = GAME_STATE.split("/")
-HAND_NUMBER = parts[0]
-ROUND_NUMBER = parts[1]
-PLAYER_NUMBER = parts[2]
-HAND_STARTING_PLAYER_NUMBER = parts[3]
-CARDS_IN_HAND = parts[4].split(",")
-PLAYED_CARDS = parts[5].split(",")
-PLAYER_POINTS = parts[6].split(",")
+HAND_NUMBER = int(parts[0])
+ROUND_NUMBER = int(parts[1])
+PLAYER_NUMBER = int(parts[2])
+HAND_STARTING_PLAYER_NUMBER = int(parts[3])
+CARDS_IN_HAND = list(map(int, parts[4].split(",")))
+PLAYED_CARDS = list(map(int, parts[5].split(",")))
+PLAYER_POINTS = list(map(int, parts[6].split(",")))
 playerCardParts = parts[7].split("|")
+#https://stackoverflow.com/questions/6429638/how-to-split-a-string-of-space-separated-numbers-into-integers
 
 PLAYER_CARDS_WON = [] #This will be a 2D array
 HEARTS_BROKEN = False
 
 for playerCards in playerCardParts:
-  cardsList = playerCards.split(",")
+  cardsList = list(map(int, playerCards.split(",")))
   #While grabbing the player's cards, lets see if hearts have been broken
   if not HEARTS_BROKEN:
     #Only check to see if hearts have been broken if we haven't already determined if they've been broken
@@ -35,7 +36,7 @@ for playerCards in playerCardParts:
         HEARTS_BROKEN = True
         #We don't need to keep checking cards now that we know hearts are broken
         break
-  PLAYER_CARDS_WON.append()
+  PLAYER_CARDS_WON.append(cardsList)
 
 #Lets determine if we have cards other than hearts in our hand
 ONLY_HEARTS_IN_HAND = True
@@ -52,7 +53,7 @@ random.seed()
 ####################################
 def pickRandomCard(availabeCards):
   #Generate a random number
-  randomNumber = random.randint(0, CARDS_IN_HAND.count()-1)
+  randomNumber = random.randint(0, len(CARDS_IN_HAND)-1)
   #Store a reference to to the card's value
   card = CARDS_IN_HAND[randomNumber]
   #Remove the card from your hand once it has been picked
@@ -69,7 +70,7 @@ def getCardSuit(card):
 ####################################
 # Define a function to print out the card we want to play, or the cards we are going to pass
 def printCards(card):
-  sys.stdout.write(card)
+  sys.stdout.write(str(card))
   sys.exit()
 ####################################
 def passCards():
@@ -127,7 +128,7 @@ def getCardToPlay():
         if getCardSuit(card) == leadSuit:
           availableCards.append(card)
       
-      if availableCards.count() > 0:
+      if len(availableCards) > 0:
         #If we have a card that matches the lead suit, pick one to play
         cardToPlay = pickRandomCard(availableCards)
       else:
