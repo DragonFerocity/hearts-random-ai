@@ -46,18 +46,15 @@ for card in CARDS_IN_HAND:
     ONLY_HEARTS_IN_HAND = False
     break
 
-#Next lets seed our random number generator
-random.seed()
-
 #The following functions are specific to the randomAI
 ####################################
 def pickRandomCard(availabeCards):
   #Generate a random number
-  randomNumber = random.randint(0, len(CARDS_IN_HAND)-1)
+  randomNumber = random.randint(0, len(availabeCards)-1)
   #Store a reference to to the card's value
-  card = CARDS_IN_HAND[randomNumber]
+  card = availabeCards[randomNumber]
   #Remove the card from your hand once it has been picked
-  del CARDS_IN_HAND[randomNumber]
+  del availabeCards[randomNumber]
   #Return the card we wish to play
   return card
 ####################################
@@ -114,7 +111,6 @@ def getCardToPlay():
       cardToPlay = pickRandomCard(CARDS_IN_HAND)
       #Wondering why there's no if check? A while loop checks the while condition first before running the body, so an if check is redundant
       # If hearts have been broken, we don't need to keep picking cards, we can lead with a heart
-      # If hearts have not been broken, but we only have hearts, we have no choice but to play a heart
       while getCardSuit(cardToPlay) == 4 and not HEARTS_BROKEN and not ONLY_HEARTS_IN_HAND:
         #If hearts have not been broken, we cannot lead with a heart unless we only have hearts
         cardToPlay = pickRandomCard(CARDS_IN_HAND)
@@ -138,6 +134,9 @@ def getCardToPlay():
 
   #Return the card we want to play
   return cardToPlay
+
+#Lets seed our random number generator
+random.seed()
 
 #Now that we have all the information, lets figure out what to do
 cardToPlay = getCardToPlay()
