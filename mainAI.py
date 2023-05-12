@@ -22,12 +22,12 @@ else:
   CARDS_IN_HAND = list(map(int, parts[4].split(",")))
 
 if parts[5] == "":
-  PLAYED_CARDS = ""
+  PLAYED_CARDS = []
 else:
   PLAYED_CARDS = list(map(int, parts[5].split(",")))
 
 if parts[6] == "":
-  PLAYER_POINTS = ""
+  PLAYER_POINTS = []
 else:
   PLAYER_POINTS = list(map(int, parts[6].split(",")))
 
@@ -97,26 +97,16 @@ def passCards():
 ####################################
 def getCardToPlay():
   cardToPlay = 0
-  if HAND_NUMBER == 1:
-    #If it is the first hand, there are some special rules
-    if HAND_STARTING_PLAYER_NUMBER != PLAYER_NUMBER:
-      #If the starting player is not us, we cannot play a heart or the Queen of Spades
-      while cardToPlay == 0:
-        #Pick a card to play
-        card = pickRandomCard(CARDS_IN_HAND)
-        #Determine if the card is valid to be played on the first round
-        if getCardSuit(card) < 4 and card != 312:
-          # On the first round, we cannot play a heart `getCardSuit(card)` AND we cannot play the Queen of Spades `card != 312`
-          cardToPlay = card
-    else:
-      #If we are the starting player, we must have the 2 of Clubs. We only have one option, to play that card
-      #Lets do a sanity check to make sure we actually have the 2 of Clubs
-      try:
-        cardIndex = CARDS_IN_HAND.index(102)
-        cardToPlay = CARDS_IN_HAND[cardIndex]
-      except:
-        #We do not have the 2 of Clubs
-        cardToPlay = 999
+  if HAND_NUMBER == 1 and HAND_STARTING_PLAYER_NUMBER == PLAYER_NUMBER:
+    #If it is the first hand, there are some special rules for each player, but only the rules for the starting player are in this block
+    #If we are the starting player, we must have the 2 of Clubs. We only have one option: to play that card
+    #Lets do a sanity check to make sure we actually have the 2 of Clubs
+    try:
+      cardIndex = CARDS_IN_HAND.index(102)
+      cardToPlay = CARDS_IN_HAND[cardIndex]
+    except:
+      #We do not have the 2 of Clubs
+      cardToPlay = 999
   else:
     #On subsequent hands, the only rule is that we must follow the lead suit if possible
     if HAND_STARTING_PLAYER_NUMBER == PLAYER_NUMBER:
@@ -135,7 +125,11 @@ def getCardToPlay():
       availableCards = []
       for card in CARDS_IN_HAND:
         if getCardSuit(card) == leadSuit:
-          availableCards.append(card)
+          if HAND_NUMBER == 1 and getCardSuit(card) != 4 and card != 312:
+            #If we are in the first hand, we cannot play a heart of the Queen of Spades
+            availableCards.append(card)
+          else:
+            availableCards.append(card)
       
       if len(availableCards) > 0:
         #If we have a card that matches the lead suit, pick one to play
@@ -144,6 +138,11 @@ def getCardToPlay():
         #If we have no cards that match the lead suit, find a card to play
         # Since we have none of the lead suit, we can play anything even if hearts have not been broken
         cardToPlay = pickRandomCard(CARDS_IN_HAND)
+
+        if HAND_NUMBER == 1:
+          while getCardSuit(cardToPlay) == 0 or cardToPlay == 312:
+            #Pick a card to play
+            card = pickRandomCard(CARDS_IN_HAND)
 
   #Return the card we want to play
   return cardToPlay
