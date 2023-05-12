@@ -139,5 +139,9 @@ def getCardToPlay():
 random.seed()
 
 #Now that we have all the information, lets figure out what to do
-cardToPlay = getCardToPlay()
-printCards(cardToPlay)
+if HAND_NUMBER == 0: 
+  cardsToPass = passCards()
+  printCards(",".join(cardsToPass))
+else:
+  cardToPlay = getCardToPlay()
+  printCards(cardToPlay)
