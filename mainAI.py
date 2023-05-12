@@ -16,9 +16,21 @@ HAND_NUMBER = int(parts[0])
 ROUND_NUMBER = int(parts[1])
 PLAYER_NUMBER = int(parts[2])
 HAND_STARTING_PLAYER_NUMBER = int(parts[3])
-CARDS_IN_HAND = list(map(int, parts[4].split(",")))
-PLAYED_CARDS = list(map(int, parts[5].split(",")))
-PLAYER_POINTS = list(map(int, parts[6].split(",")))
+if parts[4] == "":
+  CARDS_IN_HAND = ""
+else:
+  CARDS_IN_HAND = list(map(int, parts[4].split(",")))
+
+if parts[5] == "":
+  PLAYED_CARDS = ""
+else:
+  PLAYED_CARDS = list(map(int, parts[5].split(",")))
+
+if parts[6] == "":
+  PLAYER_POINTS = ""
+else:
+  PLAYER_POINTS = list(map(int, parts[6].split(",")))
+
 playerCardParts = parts[7].split("|")
 #https://stackoverflow.com/questions/6429638/how-to-split-a-string-of-space-separated-numbers-into-integers
 
@@ -26,17 +38,18 @@ PLAYER_CARDS_WON = [] #This will be a 2D array
 HEARTS_BROKEN = False
 
 for playerCards in playerCardParts:
-  cardsList = list(map(int, playerCards.split(",")))
-  #While grabbing the player's cards, lets see if hearts have been broken
-  if not HEARTS_BROKEN:
-    #Only check to see if hearts have been broken if we haven't already determined if they've been broken
-    for card in cardsList:
-      if round(card/100) == 4:
-        #Dividing the card# by 100 and rounding gives us the suit: 1 - Clubs, 2 - Diamonds, 3 - Spades, 4 - Hearts
-        HEARTS_BROKEN = True
-        #We don't need to keep checking cards now that we know hearts are broken
-        break
-  PLAYER_CARDS_WON.append(cardsList)
+  if playerCards != "":
+    cardsList = list(map(int, playerCards.split(",")))
+    #While grabbing the player's cards, lets see if hearts have been broken
+    if not HEARTS_BROKEN:
+      #Only check to see if hearts have been broken if we haven't already determined if they've been broken
+      for card in cardsList:
+        if round(card/100) == 4:
+          #Dividing the card# by 100 and rounding gives us the suit: 1 - Clubs, 2 - Diamonds, 3 - Spades, 4 - Hearts
+          HEARTS_BROKEN = True
+          #We don't need to keep checking cards now that we know hearts are broken
+          break
+    PLAYER_CARDS_WON.append(cardsList)
 
 #Lets determine if we have cards other than hearts in our hand
 ONLY_HEARTS_IN_HAND = True
@@ -141,7 +154,7 @@ random.seed()
 #Now that we have all the information, lets figure out what to do
 if HAND_NUMBER == 0: 
   cardsToPass = passCards()
-  printCards(",".join(cardsToPass))
+  printCards(",".join(map(str, cardsToPass)))
 else:
   cardToPlay = getCardToPlay()
   printCards(cardToPlay)
